@@ -32,7 +32,7 @@ int initCard(Cards* c)
     }
     fclose(fc);
     return i;
-}
+}//程序启动时，把磁盘上的卡片档案重新恢复到内存链表里
 
 int saveCard(Cards* c)
 {
@@ -65,7 +65,7 @@ int saveCard(Cards* c)
     }
     fclose(fp);
     return i;
-}
+}//保存数据到文件 顺便把整条链表内存释放掉
 
 void cardcpy(Card* b, Card* a)
 {
@@ -79,7 +79,7 @@ void cardcpy(Card* b, Card* a)
     b->tEnd = a->tEnd;
     b->tLast = a->tLast;
     b->tStart = a->tStart;
-}
+}//复制“卡片业务数据”
 
 int vague_search(Cards* c, Cards* ret, char* txt, int txt_size)//模糊查询
 {
@@ -99,7 +99,7 @@ int vague_search(Cards* c, Cards* ret, char* txt, int txt_size)//模糊查询
     }
     if (sign) return 0;
     return 1;
-}
+}//按卡号进行模糊查询，把符合条件的卡放到结果链表 ret 里
 
 void PrintCard(Cards* c)
 {
@@ -109,7 +109,7 @@ void PrintCard(Cards* c)
         printf("%s\t%s\t%d\t%.1f\n", p->aId, p->aPwd, p->nStatus, p->fBalance);
         p = p->next;
     }
-}
+}//打印卡片链表中每张卡的简要信息
 
 void InsertCard(Cards* c, Card* newc)
 {
@@ -124,7 +124,7 @@ void InsertCard(Cards* c, Card* newc)
         c->head = c->tail = newc;
         c->head->next = NULL;
     }
-}
+}//把新卡节点插入到卡片主链表尾部
 
 void InsertCard1(Cards* c, Card* newc)
 {
@@ -139,7 +139,7 @@ void InsertCard1(Cards* c, Card* newc)
         c->head = c->tail = newc;
         c->head->next1 = NULL;
     }
-}
+}//把节点插入到辅助链表尾部
 
 // billing
 
@@ -153,7 +153,7 @@ Billing* CreateBilling(char id[40])
     newB->nStatus = 0;
     newB->nDel = 0;
     return newB;
-}
+}//创建一条新的计费记录
 
 int initBill(Billings* b)
 {
@@ -180,7 +180,7 @@ int initBill(Billings* b)
     }
     fclose(fb);
     return i;
-}
+}//从 billing_file.txt 读取账单数据，建立账单主链表。
 
 int saveBill(Billings* b)
 {
@@ -211,7 +211,7 @@ int saveBill(Billings* b)
     }
     fclose(fp);
     return i;
-}
+}//把账单数据保存到 billing_file.txt 顺便释放内存
 
 Billing* searchLoginBill(Billings* b, char* id)
 {

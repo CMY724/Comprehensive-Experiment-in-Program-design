@@ -10,13 +10,17 @@ void ShowStatistics(Cards* c, Billings* b, Charges* m)
     printf("1 - 消费记录查询\n");
     printf("2 - 统计总营业额\n");
     printf("3 - 统计月营业额\n");
+    printf("4 - 查询当前在线用户\n");
+    printf("5 - 查询余额不足用户\n");
+    printf("6 - 查询欠费用户\n");
+    printf("7 - 查询某张卡的充值/退费记录\n");
     int a = 0;
-    while (a != 1 && a != 2 && a != 3)
+    while (a < 1 || a > 7)
     {
         char ch[4];
         scanf("%s", ch);
         a = ch[0] - '0';
-        if (a == 1 || a == 2 || a == 3) break;
+        if (a >= 1 && a <= 7) break;
         printf("请重新输入！\n");
     }
     if (a == 1)
@@ -99,10 +103,137 @@ void ShowStatistics(Cards* c, Billings* b, Charges* m)
             printf("%d月的营业额是: %.1f元\n", i + 1, money);
         }
     }
+
+    else if (a == 4)
+    {
+        ShowOnlineCards(c);
+    }
+    else if (a == 5)
+    {
+        ShowLowBalanceCards(c);
+    }
+    else if (a == 6)
+    {
+        ShowArrearsCards(c);
+    }
+    else if (a == 7)
+    {
+        ShowChargeRecords(m);
+    }
     system("pause");
 }
 
+void ShowOnlineCards(Cards* c)
+{
+    Card* p = c->head;
+    int flag = 0;
+    printf("------------------- 当前在线用户 ---------------------\n");
+    printf("卡号\t余额\t累计消费\t使用次数\t最后使用时间\n");
+    while (p != NULL)
+    {
+        if (p->nStatus == 1)
+        {
+            char time[40];
+            time_to_string(p->tLast, time, sizeof(time) / sizeof(char));
+            printf("%s\t%.1f\t%.1f\t\t%d\t\t%s\n",
+                p->aId, p->fBalance, p->fTotalUse, p->nUseCount, time);
+            flag = 1;
+        }
+        p = p->next;
+    }
+    if (!flag)
+    {
+        printf("当前没有用户正在上机！\n");
+    }
+    system("pause");
+}
 
+void ShowLowBalanceCards(Cards* c)
+{
+    Card* p = c->head;
+    float limit;
+    int flag = 0;
+    printf("------------------- 余额不足查询 ---------------------\n");
+    printf("请输入余额预警值:");
+    scanf("%f", &limit);
+    printf("卡号\t状态\t余额\t最后使用时间\n");
+    while (p != NULL)
+    {
+        if (p->nStatus != 2 && p->fBalance <= limit)
+        {
+            char time[40];
+            time_to_string(p->tLast, time, sizeof(time) / sizeof(char));
+            printf("%s\t%d\t%.1f\t%s\n", p->aId, p->nStatus, p->fBalance, time);
+            flag = 1;
+        }
+        p = p->next;
+    }
+    if (!flag)
+    {
+        printf("没有找到余额不足的用户！\n");
+    }
+    system("pause");
+}
+
+void ShowArrearsCards(Cards* c)
+{
+    Card* p = c->head;
+    int flag = 0;
+    printf("--------------------- 欠费用户查询 -------------------\n");
+    printf("卡号\t欠费金额\t状态\t最后使用时间\n");
+    while (p != NULL)
+    {
+        if (p->nStatus != 2 && p->fBalance < 0)
+        {
+            char time[40];
+            time_to_string(p->tLast, time, sizeof(time) / sizeof(char));
+            printf("%s\t%.1f\t\t%d\t%s\n", p->aId, -p->fBalance, p->nStatus, time);
+            flag = 1;
+        }
+        p = p->next;
+    }
+    if (!flag)
+    {
+        printf("当前没有欠费用户！\n");
+    }
+    system("pause");
+}
+
+void ShowChargeRecords(Charges* m)
+{
+    Charge* p = m->head;
+    char id[MAXLEN];
+    int flag = 0;
+
+    printf("------------------- 充值退费记录查询 -----------------\n");
+    InputID(id);
+    printf("卡号\t类型\t金额\t时间\n");
+
+    while (p != NULL)
+    {
+        if (strcmp(p->aCardName, id) == 0)
+        {
+            char time[40];
+            time_to_string(p->tTime, time, sizeof(time) / sizeof(char));
+            if (p->nStatus == 0)
+            {
+                printf("%s\t充值\t%.1f\t%s\n", p->aCardName, p->fMoney, time);
+            }
+            else
+            {
+                printf("%s\t退费\t%.1f\t%s\n", p->aCardName, p->fMoney, time);
+            }
+            flag = 1;
+        }
+        p = p->next;
+    }
+
+    if (!flag)
+    {
+        printf("没有找到该卡的充值/退费记录！\n");
+    }
+    system("pause");
+}
 
 void Exit(Cards* c, Billings* b, Charges* m)
 {

@@ -81,3 +81,9 @@ typedef struct Charges
 void ShowStatistics(Cards* c, Billings* b, Charges* m);
 void Exit(Cards* c, Billings* b, Charges* m);
 void showDefault();
+
+//扩展功能
+void ShowOnlineCards(Cards* c);//查询当前正在上机的用户
+void ShowLowBalanceCards(Cards* c);//查询余额不足10元的用户
+void ShowArrearsCards(Cards* c);//查询欠费用户
+void ShowChargeRecords(Charges* m);//查询某张卡的充值退费记录
